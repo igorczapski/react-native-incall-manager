@@ -195,6 +195,34 @@ RCT_EXPORT_METHOD(stop:(NSString *)busytoneUriType)
     }
 }
 
+RCT_EXPORT_METHOD(stopWithoutDeactivatingAudio:(NSString *)busytoneUriType)
+{
+    if (!_audioSessionInitialized) {
+        return;
+    }
+
+    [self stopRingback];
+
+    if (busytoneUriType.length > 0 && [self startBusytone:busytoneUriType]) {
+        // play busytone first, and call this func again when finish
+        NSLog(@"RNInCallManager.stop(): play busytone before stop");
+        return;
+    } else {
+        NSLog(@"RNInCallManager.stop(): stop InCallManager");
+        [self restoreOriginalAudioSetup];
+        [self stopBusytone];
+        [self stopProximitySensor];
+        //[self audioSessionSetActive:NO
+        //                    options:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation
+        //                 callerMemo:NSStringFromSelector(_cmd)];
+        [self setKeepScreenOn:NO];
+        [self stopAudioSessionNotification];
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+        _forceSpeakerOn = 0;
+        //_audioSessionInitialized = NO;
+    }
+}
+
 RCT_EXPORT_METHOD(turnScreenOn)
 {
     NSLog(@"RNInCallManager.turnScreenOn(): ios doesn't support turnScreenOn()");

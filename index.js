@@ -37,6 +37,12 @@ class InCallManager {
         _InCallManager.stop(busytone);
     }
 
+	stopWithoutDeactivatingAudio(setup) {
+		setup = (setup === undefined) ? {} : setup;
+		let busytone = (!!setup.busytone) ? (typeof setup.busytone === 'string') ? setup.busytone : "" : "";
+		_InCallManager.stopWithoutDeactivatingAudio(busytone);
+	}
+
     turnScreenOff() {
         _InCallManager.turnScreenOff();
     }
